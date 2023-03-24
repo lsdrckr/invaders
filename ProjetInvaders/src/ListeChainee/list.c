@@ -43,8 +43,6 @@ void init_liste(cellule **pl, int nx, int ny, int e, int sprt, int bord){
             lut.sprite = sprt;
             lut.posx = e*x + bord;
             lut.posy = e*y + bord;
-            lut.vitx = -1;
-            lut.vity = 1;
             lut.etat = 1;
             head_push(pl,lut);
             afficherLutin(lut.sprite,lut.posx,lut.posy);

@@ -5,8 +5,6 @@ typedef struct lutin{
     int sprite;
     int posx;
     int posy;
-    int vitx;
-    int vity;
     int etat;
 }lutin;
 
