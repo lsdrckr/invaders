@@ -17,6 +17,6 @@ void head_push(struct cellule **pL, struct lutin lut);
 void print_list(struct cellule *l);
 void head_pop(struct cellule **pL);
 void free_list(struct cellule **pL);
-void init_liste(cellule **pl, int nx, int ny, int ex, int ey, int sprt);
+void init_list_monster(cellule **pl, int nx, int ny, int ex, int ey, int sprt);
 
 #endif

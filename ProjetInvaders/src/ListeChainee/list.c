@@ -36,7 +36,7 @@ void free_list(cellule **pL){
     head_pop(pL);
 }
 
-void init_liste(cellule **pl, int nx, int ny, int e, int sprt, int bord){
+void init_list_monster(cellule **pL, int nx, int ny, int e, int sprt, int bord){
     for(int y = 0; y < ny; y++){
         for(int x = 0; x < nx; x++){
             lutin lut;
@@ -44,7 +44,7 @@ void init_liste(cellule **pl, int nx, int ny, int e, int sprt, int bord){
             lut.posx = e*x + bord;
             lut.posy = e*y + bord;
             lut.etat = 1;
-            head_push(pl,lut);
+            head_push(pL,lut);
             afficherLutin(lut.sprite,lut.posx,lut.posy);
             majSurface();
         }

@@ -3,12 +3,16 @@
 #include <stdio.h>
 #include "Graphique/libgraph.h"
 #include "ListeChainee/list.h"
-#define HAUTEUR 600
-#define LARGEUR 1500
-#define COL 12
-#define LIN 4
-#define BORD 1
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
+
+#define HAUTEUR 800
+#define LARGEUR 1000
+#define COL 10
+#define LIN 3
+#define BORD 0
 #define ECART 70
+#define BOMBSPEED 10
 
 void init_player(lutin *player, int x, int y, int sprt){
     player->posx = x;
@@ -34,78 +38,148 @@ int bord_droit(cellule *l){
     tmp = l;
     int max = tmp->lut.posx;
     while (tmp != NULL){
-        if (tmp->lut.posx > max) max = tmp->lut.posx;
+        int a; int b;
+        tailleLutin(tmp->lut.sprite,&a,&b);
+        if (tmp->lut.posx + a > max) max = tmp->lut.posx + a;
         tmp = tmp->suivant;
     }
     return max;
 }
 
-void move(cellule **pl, int dx, int dy){
-    rectanglePlein(0,0,LARGEUR,HAUTEUR-100,1);
+int bord_bas(cellule *l){
+    cellule *tmp;
+    tmp = l;
+    int max = tmp->lut.posy;
+    while (tmp != NULL){
+        int a; int b;
+        tailleLutin(tmp->lut.sprite,&a,&b);
+        if (tmp->lut.posy + b > max) max = tmp->lut.posy + b;
+        tmp = tmp->suivant;
+    }
+    return max;
+}
+
+void move(cellule **pL, int dx, int dy){
     cellule *p;
-    p = *pl;
+    p = *pL;
     while(p != NULL){
         p->lut.posx += dx;
         p->lut.posy += dy;
-        afficherLutin(p->lut.sprite,p->lut.posx,p->lut.posy);
         p = p->suivant;
     }
     majSurface();
 }
 
-void move_line(cellule **pl, int vitx){
-    if (bord_gauche(*pl) >= BORD && bord_droit(*pl) >= LARGEUR-BORD){
-        if (vitx == 1) move(pl, 5, 0);
-        else move(pl, -5, 0);
+void refresh(cellule * l, lutin p){
+    //Refresh écran
+    
+    rectanglePlein(0, 0, LARGEUR, HAUTEUR,1);
+    
+    //Refresh ennemis
+    cellule *tmp;
+    tmp = l;
+    
+    while(tmp != NULL){
+        afficherLutin(tmp->lut.sprite,tmp->lut.posx,tmp->lut.posy);
+        tmp = tmp->suivant;
+    }
+    
+    //Refresh player
+    
+    afficherLutin(p.sprite, p.posx, p.posy);
+}
+    
+    
+int move_line(cellule **pL, int vitx){
+    if (bord_gauche(*pL) >= BORD && bord_droit(*pL) <= LARGEUR-BORD){
+        if (vitx == 1) move(pL, 5, 0);
+        else move(pL, -5, 0);
     }
         
-    else if (bord_gauche(*pl) < BORD){
+    else if (bord_gauche(*pL) < BORD){
         vitx = 1;
-        move(pl, 5, 5);
+        move(pL, 5, 15);
     }
         
-    else if (bord_droit(*pl) > LARGEUR-BORD){
+    else if (bord_droit(*pL) > LARGEUR-BORD){
         vitx = -1;
-        move(pl, -5, 5);
+        move(pL, -5, 15);
     }
-    printf("%d\n", bord_droit(*pl));
+    return vitx;
 }
 
+void jeu(lutin *p, cellule *l){
+    int go = 1;
+    int vitx = 1;
+    int tick = 0;
+    
+    int taille[2];
+    tailleLutin(p->sprite, &taille[0], &taille[1]);
+    
+    while(go){
+        
+        SDL_Event event;
+        SDL_PollEvent(&event);
+        
+        switch (event.type){
+        case SDL_QUIT:
+            go = 0;
+            break;
+        case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_RIGHT){
+                if (p->posx < LARGEUR - BORD - taille[0]) p->posx += 5 ;
+                printf("%d\n", p->posx);
+            }
+            
+            if (event.key.keysym.sym == SDLK_LEFT){
+                if (p->posx > BORD) p->posx -= 5;
+                printf("%d\n", p->posx);
+            }
+            
+            break;
+        }
+        
+        if (tick % BOMBSPEED == 0){
+            
+        }
+        
+        usleep(10000);
+        refresh(l, *p);
+        vitx = move_line(&l,vitx);
+        SDL_Delay(1);
+        
+        tick ++;
+    }
+}
+        
+        
 int main(void){
     creerSurface(LARGEUR,HAUTEUR,"Bonjour");
     
     int player1 = chargerLutin("../Lutins/invader_canon.bmp",5);
     int monster1 = chargerLutin("../Lutins/invader_monstre2_1.bmp",5);
     //int monster2 = chargerLutin("../Lutins/invader_monstre2_2.bmp",5);
-    int taille1[2];
+    int bomb = chargerLutin("../Lutins/invader_bombe.bmp",5);
     
-    tailleLutin(monster1, &taille1[0], &taille1[1]);
+//     int taille1[2];
+//     
+//     tailleLutin(monster1, &taille1[0], &taille1[1]);
     
     cellule *l = NULL;
     
     lutin p;
     init_player(&p, LARGEUR/2, HAUTEUR-50,player1);
     
-    init_liste(&l, COL, LIN, ECART, monster1, BORD);
+    init_list_monster(&l, COL, LIN, ECART, monster1, BORD);
     
-    //int rangex = LARGEUR - (2*BORD + taille1[0] + (COL-1)*ECART);
+    cellule *b = NULL;
+    
+    jeu(&p, l);
+    
+//     int rangex = LARGEUR - (2*BORD + taille1[0] + (COL-1)*ECART);
     //int rangey = HAUTEUR - (2*BORD + taille1[1] + (LIN-1)*ECART);
     
-    int game = 1;
-    int vitx = 1;
-    /*evenement *evt;
-    char *touche;
-    int compt_sprt = 0;*/
-    
-    while(game){
-        
-        usleep(10000);
-        
-        //lireEvenement(evt, touche, NULL);
-        
-        //move(&l,5,0);
-        
-        move_line(&l,1);
+//     int compt_sprt = 0;
         
 //         if (compt_sprt == 50){
 //             for (int i = 0; i < COL*LIN; i++){
@@ -123,7 +197,7 @@ int main(void){
 //         }
 //         
 //         compt_sprt++;
-            
+//             
 //         for(int i = 0; i<rangex; i++){
 //             move(&l, 1, 0);
 //         }
@@ -131,9 +205,6 @@ int main(void){
 //         for(int j = 0; j<rangex; j++){
 //             move(&l, -1, 0);
 //         }
-    }
-    
-    print_list(l);
     
     free_list(&l);
     
