@@ -9,11 +9,14 @@ default: ${TARGET}
 list.o: ListeChainee/list.h ListeChainee/list.c
 	clang $(CFLAGS) -c ListeChainee/list.c
 
-main.o: main.c ListeChainee/list.h
+alea.o: Random/alea.h Random/alea.c
+	clang $(CFLAGS) -c Random/alea.c
+
+main.o: main.c ListeChainee/list.h Random/alea.h
 	clang $(CFLAGS) -c main.c
 
-${TARGET}: main.o list.o
-	clang main.o list.o -o $(TARGET) $(LDFLAGS)
+${TARGET}: main.o list.o alea.o
+	clang *.o -o $(TARGET) $(LDFLAGS)
 	
 .PHONY: clean
 
