@@ -16,7 +16,7 @@
 #define BOMBSPEED 10
 #define VITXM 5
 #define VITYM 15
-#define VITYB -5
+#define VITYB 5
 #define VITXP 5
 #define SLEEP 10000
 #define HAUTEURP (HAUTEUR - 50)
@@ -117,7 +117,8 @@ void move_bomb(cellule **pL, int dy) {
 }
 
 
-int is_bomber(cellule **pL){
+
+int cmpt_bas(cellule **pL){
   int cmpt = 0;
   cellule *p = NULL;
   p = *pL;
@@ -133,27 +134,52 @@ int is_bomber(cellule **pL){
 
 
 
-void refresh(cellule *l, lutin p) {
+void refresh(cellule *l, lutin p, cellule *b) {
   // Refresh écran
 
   rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
 
   // Refresh ennemis
-  cellule *tmp = NULL;
-  tmp = l;
+  cellule *tmpmstr = NULL;
+  tmpmstr = l;
 
-  while (tmp != NULL) {
-    afficherLutin(tmp->lut.sprite, tmp->lut.posx, tmp->lut.posy);
-    tmp = tmp->suivant;
+  while (tmpmstr != NULL) {
+    afficherLutin(tmpmstr->lut.sprite, tmpmstr->lut.posx, tmpmstr->lut.posy);
+    tmpmstr = tmpmstr->suivant;
   }
 
   // Refresh player
-
   afficherLutin(p.sprite, p.posx, p.posy);
+  
+  // Refresh bombes
+  cellule *tmpbomb = NULL;
+  tmpbomb = b;
+  
+  while (tmpbomb != NULL){
+    afficherLutin(tmpbomb->lut.sprite, tmpbomb->lut.posx, tmpbomb->lut.posy);
+    tmpbomb = tmpbomb->suivant;
+  }
 }
 
 
 
+int bomber (cellule *l, int cmpt){
+    cellule *tmp = NULL;
+    tmp = l;
+    while (tmp != NULL){
+        if (tmp->lut.etat == 2){
+            if (!hasard(0,cmpt)){
+                break;
+            }
+            cmpt --;
+        }
+        tmp = tmp->suivant;
+    }
+    return tmp->lut.posx;
+}
+
+
+            
 int move(cellule **pL, cellule **pB, int vitx) {
   if (bord_gauche(*pL) >= BORD && bord_droit(*pL) <= LARGEUR - BORD) {
     if (vitx == 1) {
@@ -213,12 +239,12 @@ void jeu(lutin *p, cellule *l, cellule *b) {
     }
 
     if (tick % BOMBSPEED == 0) {
-        
-        bomb_add(&b, 0, bord_bas(l), bomb);
+        bomb_add(&b, bomber(l, cmpt_bas(&l)), bord_bas(l), bomb);
+        printf("+1 bombe");
     }
 
     usleep(SLEEP);
-    refresh(l, *p);
+    refresh(l, *p, b);
     vitx = move(&l, &b, vitx);
     SDL_Delay(1);
 
