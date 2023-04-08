@@ -69,3 +69,18 @@ void bomb_add(cellule **pL, int x, int y, int sprt) {
   head_push(pL, lut);
   afficherLutin(lut.sprite, lut.posx, lut.posy);
 }
+
+
+
+void missile_add(cellule **pL, int x, int y, int sprt, int sprtplr) {
+  int a = 0;
+  int b = 0;
+  tailleLutin(sprtplr, &a, &b);
+  lutin lut;
+  lut.posx = x + a/2;
+  lut.posy = y;
+  lut.sprite = sprt;
+  lut.etat = 1;
+  head_push(pL, lut);
+  afficherLutin(lut.sprite, lut.posx, lut.posy);
+}

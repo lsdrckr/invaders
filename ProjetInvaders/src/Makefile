@@ -12,10 +12,13 @@ list.o: ListeChainee/list.h ListeChainee/list.c
 alea.o: Random/alea.h Random/alea.c
 	clang $(CFLAGS) -c Random/alea.c
 
-main.o: main.c ListeChainee/list.h Random/alea.h
+move.o: Deplacement/move.h Deplacement/move.c
+	clang $(CFLAGS) -c Deplacement/move.c
+
+main.o: main.c ListeChainee/list.h Random/alea.h Deplacement/move.h
 	clang $(CFLAGS) -c main.c
 
-${TARGET}: main.o list.o alea.o
+${TARGET}: main.o list.o alea.o move.o
 	clang *.o -o $(TARGET) $(LDFLAGS)
 	
 .PHONY: clean
