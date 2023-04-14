@@ -73,7 +73,7 @@ void move_mstr(cellule **pL, int dx, int dy) {
 
 
 
-void move_bomb_missile(cellule **pL, int dy) {
+void move_bomb(cellule **pL, int dy) {
   cellule *p = NULL;
   p = *pL;
   while (p != NULL) {
@@ -86,7 +86,7 @@ void move_bomb_missile(cellule **pL, int dy) {
 
 
 
-int move(cellule **pL, cellule **pB, cellule **pM, int vitx) {
+int move(cellule **pL, cellule **pB, lutin *m, int vitx) {
   if (bord_gauche(*pL) >= BORD && bord_droit(*pL) <= LARGEUR - BORD) {
     if (vitx == 1) {
       move_mstr(pL, VITXM, 0);
@@ -105,9 +105,9 @@ int move(cellule **pL, cellule **pB, cellule **pM, int vitx) {
     move_mstr(pL, -1 * VITXM, VITYM);
   }
 
-  move_bomb_missile(pB, VITYB);
+  move_bomb(pB, VITYB);
 
-  move_bomb_missile(pM, VITYMISS);
-
+  m->posy += VITYMISS;
+  
   return vitx;
 }

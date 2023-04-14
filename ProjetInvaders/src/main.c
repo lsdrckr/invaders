@@ -31,6 +31,16 @@ void init_player(lutin *player, int x, int y, int sprt) {
 
 
 
+void init_missile(lutin *missile, int x, int y, int sprt) {
+  missile->posx = x;
+  missile->posy = y;
+  missile->sprite = sprt;
+  missile->etat = 1;
+  afficherLutin(sprt, x, y);
+}
+
+
+
 int cmpt_bas(cellule **pL){
   int i = 0;
   cellule *p = NULL;
@@ -50,7 +60,26 @@ int cmpt_bas(cellule **pL){
 
 
 
-void refresh(cellule *l, cellule *b, cellule *m, lutin p) {
+void del_bomb(cellule **b){
+    cellule **tmp = NULL;
+    tmp = b;
+    while ((*tmp) != NULL){
+        printf("A\n");
+        if ((*tmp)->lut.posy > 500){
+            printf("OK\n");
+            tail_pop(b);
+            printf("FIN OK\n");
+        }
+        else{
+            printf("C\n");
+            (*tmp) = (*tmp)->suivant;
+        }
+    }
+}
+
+
+
+void refresh(cellule *l, cellule *b, lutin m, lutin p) {
   // Refresh écran
   rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
 
@@ -74,15 +103,11 @@ void refresh(cellule *l, cellule *b, cellule *m, lutin p) {
     afficherLutin(tmpbomb->lut.sprite, tmpbomb->lut.posx, tmpbomb->lut.posy);
     tmpbomb = tmpbomb->suivant;
   }
+  
+  del_bomb(&b);
 
-  // Refresh missiles
-  cellule *tmpmssls = NULL;
-  tmpmssls = m;
-
-  while (tmpmssls != NULL){
-    afficherLutin(tmpmssls->lut.sprite, tmpmssls->lut.posx, tmpmssls->lut.posy);
-    tmpmssls = tmpmssls->suivant;
-  }
+  // Refresh missile
+  afficherLutin(m.sprite, m.posx, m.posy);
 }
 
 
@@ -107,11 +132,10 @@ int bomber (cellule *l, int cmpt){
 
 
 
-void jeu(lutin *p, cellule *l, cellule *b, cellule *m) {
+void jeu(lutin *p, cellule *l, cellule *b, lutin *m) {
   int go = 1;
   int vitx = 1;
   int tick = 0;
-  int shoot = 0;
 
   int taille[2];
   tailleLutin(p->sprite, &taille[0], &taille[1]);
@@ -137,8 +161,8 @@ void jeu(lutin *p, cellule *l, cellule *b, cellule *m) {
         }
       }
 
-      if (event.key.keysym.sym == SDLK_SPACE) {
-        shoot = 1;
+      if ((event.key.keysym.sym == SDLK_SPACE) && (tick % MISSILESPEED) && (m->posy <= 0)) {
+        init_missile(m, p->posx + (int)(taille[0]/2) - 4, p->posy, missile);
       }
 
       break;
@@ -146,16 +170,13 @@ void jeu(lutin *p, cellule *l, cellule *b, cellule *m) {
 
     if (tick % BOMBSPEED == 0) {
         bomb_add(&b, bomber(l, cmpt_bas(&l)), bord_bas(l), bomb);
+        print_list(b);
     }
 
-    if ((tick % MISSILESPEED) && shoot){
-      missile_add(&m, p->posx, p->posy, missile, player1);
-      shoot = 0;
-    }
-
+    
     usleep(SLEEP);
-    refresh(l, b, m, *p);
-    vitx = move(&l, &b, &m, vitx);
+    refresh(l, b, *m, *p);
+    vitx = move(&l, &b, m, vitx);
     SDL_Delay(1);
 
     tick++;
@@ -181,7 +202,8 @@ int main(void) {
 
   cellule *l = NULL;
   cellule *b = NULL;
-  cellule *m = NULL;
+  lutin m;
+  m.posy = -1;
   lutin p;
   
   player1 = chargerLutin("../Lutins/invader_canon.bmp", 0);
@@ -192,9 +214,10 @@ int main(void) {
 
   init(&p, LARGEUR / 2, HAUTEURP, player1, &l, COL, LIN, ECART, monster1, BORD);
 
-  jeu(&p, l, b, m);
+  jeu(&p, l, b, &m);
 
   free_list(&l);
+  //free_list(&b);
 
   fermerSurface();
 

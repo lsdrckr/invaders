@@ -34,6 +34,28 @@ void head_pop(cellule **pL) {
   free(tmp);
 }
 
+
+
+void tail_pop(cellule **pL) {
+    cellule *tmp = NULL;
+    tmp = *pL;
+    printf("QUEUE 1\n");
+    if ((*pL)->suivant == NULL) (*pL) = NULL;
+    else{
+        while ((*pL)->suivant != NULL){
+            printf("QUEUE 2\n");
+            (*pL) = (*pL)->suivant;
+            printf("QUEUE 3\n");
+        }
+    }
+    (*pL) = NULL;
+    printf("QUEUE 4\n");
+    free(tmp);
+    printf("QUEUE 5\n");
+}
+
+
+
 void free_list(cellule **pL) {
   while ((*pL)->suivant != NULL) {
     head_pop(pL);
@@ -63,21 +85,6 @@ void init_list_monster(cellule **pL, int nx, int ny, int e, int sprt, int bord) 
 void bomb_add(cellule **pL, int x, int y, int sprt) {
   lutin lut;
   lut.posx = x;
-  lut.posy = y;
-  lut.sprite = sprt;
-  lut.etat = 1;
-  head_push(pL, lut);
-  afficherLutin(lut.sprite, lut.posx, lut.posy);
-}
-
-
-
-void missile_add(cellule **pL, int x, int y, int sprt, int sprtplr) {
-  int a = 0;
-  int b = 0;
-  tailleLutin(sprtplr, &a, &b);
-  lutin lut;
-  lut.posx = x + a/2;
   lut.posy = y;
   lut.sprite = sprt;
   lut.etat = 1;
