@@ -2,6 +2,7 @@
 #include "ListeChainee/list.h"
 #include "Random/alea.h"
 #include "Deplacement/move.h"
+#include "Collision/collide.h"
 #include "define.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
@@ -63,15 +64,12 @@ int cmpt_bas(cellule **pL){
 void del_bomb(cellule **b){
     cellule **tmp = NULL;
     tmp = b;
-    while ((*tmp) != NULL){
-        printf("A\n");
-        if ((*tmp)->lut.posy > 500){
-            printf("OK\n");
-            tail_pop(b);
-            printf("FIN OK\n");
+    while ((*tmp)->suivant != NULL){
+        if ((*tmp)->lut.posy >= 500){
+            tmp = tail_pop(tmp);
+            break;
         }
         else{
-            printf("C\n");
             (*tmp) = (*tmp)->suivant;
         }
     }
@@ -170,7 +168,6 @@ void jeu(lutin *p, cellule *l, cellule *b, lutin *m) {
 
     if (tick % BOMBSPEED == 0) {
         bomb_add(&b, bomber(l, cmpt_bas(&l)), bord_bas(l), bomb);
-        print_list(b);
     }
 
     
@@ -178,6 +175,13 @@ void jeu(lutin *p, cellule *l, cellule *b, lutin *m) {
     refresh(l, b, *m, *p);
     vitx = move(&l, &b, m, vitx);
     SDL_Delay(1);
+    
+    
+    //Collision
+    collide(&l, m/*, &b, p*/);
+    monster_pop(&l);
+    
+    //Aa
 
     tick++;
   }
@@ -217,7 +221,7 @@ int main(void) {
   jeu(&p, l, b, &m);
 
   free_list(&l);
-  //free_list(&b);
+  free_list(&b);
 
   fermerSurface();
 

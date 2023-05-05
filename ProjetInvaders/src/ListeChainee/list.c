@@ -36,24 +36,40 @@ void head_pop(cellule **pL) {
 
 
 
-void tail_pop(cellule **pL) {
+cellule **tail_pop(cellule **pL) {
     cellule *tmp = NULL;
     tmp = *pL;
-    printf("QUEUE 1\n");
-    if ((*pL)->suivant == NULL) (*pL) = NULL;
-    else{
-        while ((*pL)->suivant != NULL){
-            printf("QUEUE 2\n");
-            (*pL) = (*pL)->suivant;
-            printf("QUEUE 3\n");
-        }
+    cellule *l = NULL;
+    cellule *t = NULL;
+    while (tmp->suivant->suivant != NULL){
+        tmp = tmp->suivant;
     }
-    (*pL) = NULL;
-    printf("QUEUE 4\n");
-    free(tmp);
-    printf("QUEUE 5\n");
+    l = tmp;
+    t = tmp->suivant;
+    l->suivant = NULL;
+    free(t);
+return pL;
 }
 
+
+void monster_pop(cellule **pL){
+    cellule *tmp = *pL;
+    cellule *ptmp = *pL;
+    while (tmp != NULL){
+        if(tmp->lut.etat == 0){
+            ptmp->suivant = tmp->suivant;
+            free(tmp);
+            print_list(*pL);
+            printf("OUI\n");
+        }
+        else{
+            ptmp = ptmp->suivant;
+            printf("NON\n");
+        }
+    tmp = tmp->suivant;
+    }
+    free(tmp);
+}
 
 
 void free_list(cellule **pL) {

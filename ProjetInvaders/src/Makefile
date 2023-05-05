@@ -4,7 +4,8 @@ TARGET=main
 CFLAGS=-g -W -Wall -Wextra
 LDFLAGS=-lgraph -lSDL -lSDL_ttf -LGraphique
 
-default: ${TARGET}
+all: ${TARGET}
+	$(MAKE) -C Graphique $@
 
 list.o: ListeChainee/list.h ListeChainee/list.c
 	clang $(CFLAGS) -c ListeChainee/list.c
@@ -14,11 +15,14 @@ alea.o: Random/alea.h Random/alea.c
 
 move.o: Deplacement/move.h Deplacement/move.c
 	clang $(CFLAGS) -c Deplacement/move.c
+	
+collide.o: Collision/collide.h Collision/collide.c
+	clang $(CFLAGS) -c Collision/collide.c
 
-main.o: main.c ListeChainee/list.h Random/alea.h Deplacement/move.h
+main.o: main.c define.h ListeChainee/list.h Random/alea.h Deplacement/move.h Collision/collide.h
 	clang $(CFLAGS) -c main.c
 
-${TARGET}: main.o list.o alea.o move.o
+${TARGET}: main.o list.o alea.o move.o collide.o
 	clang *.o -o $(TARGET) $(LDFLAGS)
 	
 .PHONY: clean

@@ -19,6 +19,7 @@ void head_pop(struct cellule **pL);
 void free_list(struct cellule **pL);
 void init_list_monster(cellule **pl, int nx, int ny, int e, int sprt, int bord);
 void bomb_add(cellule **pL, int x, int y, int sprt);
-void tail_pop(cellule **pL);
+cellule **tail_pop(cellule **pL);
+void monster_pop(cellule **pL);
 
 #endif
