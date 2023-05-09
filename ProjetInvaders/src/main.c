@@ -65,7 +65,7 @@ void del_bomb(cellule **b){
     cellule **tmp = NULL;
     tmp = b;
     while ((*tmp)->suivant != NULL){
-        if ((*tmp)->lut.posy >= 500){
+        if ((*tmp)->lut.posy >= HAUTEUR){
             tmp = tail_pop(tmp);
             break;
         }
@@ -178,10 +178,14 @@ void jeu(lutin *p, cellule *l, cellule *b, lutin *m) {
     
     
     //Collision
-    collide(&l, m/*, &b, p*/);
+    collide(&l, m, &b, p);
     monster_pop(&l);
-    
-    //Aa
+    monster_pop(&b);
+
+    if (p->etat == 0){
+      printf("GAME OVER !");
+      go = 0;
+    }
 
     tick++;
   }
@@ -199,6 +203,18 @@ void init(lutin* player, int x, int y, int sprtplr, cellule **pL, int nx, int ny
     
 
 
+void end(){
+  rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
+  int game_over = lutinTexte("GAME OVER !!!", 0);
+
+//   int taille[2];
+//   tailleLutin(game_over.sprite, &taille[0], &taille[1]);
+
+  afficherLutin(game_over, LARGEUR/2/* - taille[0]/2*/, HAUTEUR/2/* - taille[1]/2*/);
+}
+
+
+
 int main(void) {
   initialise_rand();
 
@@ -209,7 +225,7 @@ int main(void) {
   lutin m;
   m.posy = -1;
   lutin p;
-  
+
   player1 = chargerLutin("../Lutins/invader_canon.bmp", 0);
   monster1 = chargerLutin("../Lutins/invader_monstre2_1.bmp", 0);
   // monster2 = chargerLutin("../Lutins/invader_monstre2_2.bmp",0);
@@ -220,8 +236,12 @@ int main(void) {
 
   jeu(&p, l, b, &m);
 
-  free_list(&l);
-  free_list(&b);
+  //free_list(&l);
+  //free_list(&b);
+
+  while(1){
+    end();
+  }
 
   fermerSurface();
 

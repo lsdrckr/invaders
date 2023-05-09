@@ -10,6 +10,6 @@
 #define VITYM 40
 #define VITYB 5
 #define VITXP 5
-#define VITYMISS -5
+#define VITYMISS -15
 #define SLEEP 10000
 #define HAUTEURP (HAUTEUR - 50)

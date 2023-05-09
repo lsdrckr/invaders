@@ -36,7 +36,8 @@ void head_pop(cellule **pL) {
 
 
 
-cellule **tail_pop(cellule **pL) {
+cellule **tail_pop(cellule **pL) {            printf("OUI\n");
+
     cellule *tmp = NULL;
     tmp = *pL;
     cellule *l = NULL;
@@ -54,22 +55,27 @@ return pL;
 
 void monster_pop(cellule **pL){
     cellule *tmp = *pL;
-    cellule *ptmp = *pL;
+    cellule *ptmp = NULL;
     while (tmp != NULL){
         if(tmp->lut.etat == 0){
+          if (ptmp == NULL){
+            *pL = tmp->suivant;
+          }
+          else{
             ptmp->suivant = tmp->suivant;
-            free(tmp);
-            print_list(*pL);
-            printf("OUI\n");
+          }
+          cellule *a = tmp;
+          tmp = tmp->suivant;
+          free(a);
         }
         else{
-            ptmp = ptmp->suivant;
-            printf("NON\n");
+            ptmp = tmp;
+            tmp = tmp->suivant;
         }
-    tmp = tmp->suivant;
     }
     free(tmp);
 }
+
 
 
 void free_list(cellule **pL) {
