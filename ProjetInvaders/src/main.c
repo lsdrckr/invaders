@@ -17,6 +17,7 @@ int monster1;
 // int monster2;
 int bomb;
 int missile;
+int vie;
 
 void init_player(lutin* player, int x, int y, int sprt)
 {
@@ -168,10 +169,14 @@ void jeu(lutin* p, cellule* l, cellule* b, lutin* m)
         // Collision
         collide(&l, m, &b, p);
         monster_pop(&l);
-        monster_pop(&b);
 
         if (p->etat == 0) {
-            printf("GAME OVER !");
+            vie --;
+            if (vie == 0){
+                printf("GAME OVER !");
+                vie ++;
+            }
+            p->etat = 0;
             go = 0;
         }
 

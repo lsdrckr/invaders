@@ -6,7 +6,7 @@
 #define ECART 70
 #define BOMBSPEED 50
 #define MISSILESPEED 25
-#define VITXM 0
+#define VITXM 10
 #define VITYM 10
 #define VITYB 5
 #define VITXP 5

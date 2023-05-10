@@ -33,8 +33,6 @@ void head_pop(cellule** pL)
 
 cellule** tail_pop(cellule** pL)
 {
-    printf("OUI\n");
-
     cellule* tmp = NULL;
     tmp = *pL;
     cellule* l = NULL;

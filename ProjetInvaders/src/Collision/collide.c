@@ -44,7 +44,9 @@ void collide_p_b(cellule** bomb, lutin* p)
     bool cont = 1;
     while ((tmp != NULL) && (cont)) {
         if ((tmp->lut.posx >= p->posx) && ((tmp->lut.posx + taille_bomb[0]) <= (p->posx + taille_p[0])) && ((tmp->lut.posy + taille_bomb[1]) >= p->posy) && (tmp->lut.posy <= (p->posy + taille_p[1]))) {
-            tmp->lut.etat = 0;
+            print_list(*bomb);
+            head_pop(bomb);
+            print_list(*bomb);
             p->etat = 0;
             cont = 0;
             break;
