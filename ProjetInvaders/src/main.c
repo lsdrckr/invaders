@@ -1,249 +1,234 @@
+#include "Collision/collide.h"
+#include "Deplacement/move.h"
 #include "Graphique/libgraph.h"
 #include "ListeChainee/list.h"
 #include "Random/alea.h"
-#include "Deplacement/move.h"
-#include "Collision/collide.h"
 #include "define.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <stdbool.h>
 
-
-
-//Variables globales
+// Variables globales
 int player1;
 int monster1;
 // int monster2;
 int bomb;
 int missile;
 
-
-
-void init_player(lutin *player, int x, int y, int sprt) {
-  player->posx = x;
-  player->posy = y;
-  player->sprite = sprt;
-  player->etat = 1;
-  afficherLutin(sprt, x, y);
+void init_player(lutin* player, int x, int y, int sprt)
+{
+    player->posx = x;
+    player->posy = y;
+    player->sprite = sprt;
+    player->etat = 1;
+    afficherLutin(sprt, x, y);
 }
 
-
-
-void init_missile(lutin *missile, int x, int y, int sprt) {
-  missile->posx = x;
-  missile->posy = y;
-  missile->sprite = sprt;
-  missile->etat = 1;
-  afficherLutin(sprt, x, y);
+void init_missile(lutin* missile, int x, int y, int sprt)
+{
+    missile->posx = x;
+    missile->posy = y;
+    missile->sprite = sprt;
+    missile->etat = 1;
+    afficherLutin(sprt, x, y);
 }
 
-
-
-int cmpt_bas(cellule **pL){
-  int i = 0;
-  cellule *p = NULL;
-  p = *pL;
-  while (p != NULL) {
-    int a = 0;
-    int b = 0;
-    tailleLutin(p->lut.sprite, &a, &b);
-      if (p->lut.posy == bord_bas(p) - b){
-          p->lut.etat = 2;
-          i ++;
-      }
-    p = p->suivant;
-  }
-  return i;
+int cmpt_bas(cellule** pL)
+{
+    int i = 0;
+    cellule* p = NULL;
+    p = *pL;
+    while (p != NULL) {
+        int a = 0;
+        int b = 0;
+        tailleLutin(p->lut.sprite, &a, &b);
+        if (p->lut.posy == bord_bas(p) - b) {
+            p->lut.etat = 2;
+            i++;
+        }
+        p = p->suivant;
+    }
+    return i;
 }
 
-
-
-void del_bomb(cellule **b){
-    cellule **tmp = NULL;
+void del_bomb(cellule** b)
+{
+    cellule** tmp = NULL;
     tmp = b;
-    while ((*tmp)->suivant != NULL){
-        if ((*tmp)->lut.posy >= HAUTEUR){
+    while ((*tmp)->suivant != NULL) {
+        if ((*tmp)->lut.posy >= HAUTEUR) {
             tmp = tail_pop(tmp);
             break;
-        }
-        else{
+        } else {
             (*tmp) = (*tmp)->suivant;
         }
     }
 }
 
+void refresh(cellule* l, cellule* b, lutin m, lutin p)
+{
+    // Refresh écran
+    rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
 
+    // Refresh ennemis
+    cellule* tmpmstr = NULL;
+    tmpmstr = l;
 
-void refresh(cellule *l, cellule *b, lutin m, lutin p) {
-  // Refresh écran
-  rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
+    while (tmpmstr != NULL) {
+        afficherLutin(tmpmstr->lut.sprite, tmpmstr->lut.posx, tmpmstr->lut.posy);
+        tmpmstr = tmpmstr->suivant;
+    }
 
-  // Refresh ennemis
-  cellule *tmpmstr = NULL;
-  tmpmstr = l;
+    // Refresh player
+    afficherLutin(p.sprite, p.posx, p.posy);
 
-  while (tmpmstr != NULL) {
-    afficherLutin(tmpmstr->lut.sprite, tmpmstr->lut.posx, tmpmstr->lut.posy);
-    tmpmstr = tmpmstr->suivant;
-  }
+    // Refresh bombes
+    cellule* tmpbomb = NULL;
+    tmpbomb = b;
 
-  // Refresh player
-  afficherLutin(p.sprite, p.posx, p.posy);
-  
-  // Refresh bombes
-  cellule *tmpbomb = NULL;
-  tmpbomb = b;
-  
-  while (tmpbomb != NULL){
-    afficherLutin(tmpbomb->lut.sprite, tmpbomb->lut.posx, tmpbomb->lut.posy);
-    tmpbomb = tmpbomb->suivant;
-  }
-  
-  del_bomb(&b);
+    while (tmpbomb != NULL) {
+        afficherLutin(tmpbomb->lut.sprite, tmpbomb->lut.posx, tmpbomb->lut.posy);
+        tmpbomb = tmpbomb->suivant;
+    }
 
-  // Refresh missile
-  afficherLutin(m.sprite, m.posx, m.posy);
+    del_bomb(&b);
+
+    // Refresh missile
+    afficherLutin(m.sprite, m.posx, m.posy);
 }
 
-
-
-int bomber (cellule *l, int cmpt){
-    cellule *tmp = NULL;
+int bomber(cellule* l, int cmpt)
+{
+    cellule* tmp = NULL;
     tmp = l;
     int x = 0;
     bool cont = 1;
-    while ((tmp != NULL) && (cont)){
-        if (tmp->lut.etat == 2){
-            if (!hasard(0,cmpt)){
+    while ((tmp != NULL) && (cont)) {
+        if (tmp->lut.etat == 2) {
+            if (!hasard(0, cmpt)) {
                 x = tmp->lut.posx;
                 cont = 0;
             }
-            cmpt --;
+            cmpt--;
         }
         tmp = tmp->suivant;
     }
     return x;
 }
 
+void jeu(lutin* p, cellule* l, cellule* b, lutin* m)
+{
+    int go = 1;
+    int vitx = 1;
+    int tick = 0;
 
+    int taille[2];
+    tailleLutin(p->sprite, &taille[0], &taille[1]);
 
-void jeu(lutin *p, cellule *l, cellule *b, lutin *m) {
-  int go = 1;
-  int vitx = 1;
-  int tick = 0;
+    while (go) {
+        SDL_Event event;
+        SDL_PollEvent(&event);
 
-  int taille[2];
-  tailleLutin(p->sprite, &taille[0], &taille[1]);
+        switch (event.type) {
+        case SDL_QUIT:
+            go = 0;
+            break;
+        case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_RIGHT) {
+                if (p->posx < LARGEUR - BORD - taille[0]) {
+                    p->posx += VITXP;
+                }
+            }
 
-  while (go) {
-    SDL_Event event;
-    SDL_PollEvent(&event);
+            if (event.key.keysym.sym == SDLK_LEFT) {
+                if (p->posx > BORD) {
+                    p->posx -= VITXP;
+                }
+            }
 
-    switch (event.type) {
-    case SDL_QUIT:
-      go = 0;
-      break;
-    case SDL_KEYDOWN:
-      if (event.key.keysym.sym == SDLK_RIGHT) {
-        if (p->posx < LARGEUR - BORD - taille[0]) {
-          p->posx += VITXP;
+            if ((event.key.keysym.sym == SDLK_SPACE) && (tick % MISSILESPEED) && (m->posy <= 0)) {
+                init_missile(m, p->posx + (int)(taille[0] / 2) - 4, p->posy, missile);
+            }
+
+            break;
         }
-      }
 
-      if (event.key.keysym.sym == SDLK_LEFT) {
-        if (p->posx > BORD) {
-          p->posx -= VITXP;
+        if (tick % BOMBSPEED == 0) {
+            bomb_add(&b, bomber(l, cmpt_bas(&l)), bord_bas(l), bomb);
         }
-      }
 
-      if ((event.key.keysym.sym == SDLK_SPACE) && (tick % MISSILESPEED) && (m->posy <= 0)) {
-        init_missile(m, p->posx + (int)(taille[0]/2) - 4, p->posy, missile);
-      }
+        usleep(SLEEP);
+        refresh(l, b, *m, *p);
+        vitx = move(&l, &b, m, vitx);
+        SDL_Delay(1);
 
-      break;
-      }
+        // Collision
+        collide(&l, m, &b, p);
+        monster_pop(&l);
+        monster_pop(&b);
 
-    if (tick % BOMBSPEED == 0) {
-        bomb_add(&b, bomber(l, cmpt_bas(&l)), bord_bas(l), bomb);
+        if (p->etat == 0) {
+            printf("GAME OVER !");
+            go = 0;
+        }
+
+        tick++;
     }
-
-    
-    usleep(SLEEP);
-    refresh(l, b, *m, *p);
-    vitx = move(&l, &b, m, vitx);
-    SDL_Delay(1);
-    
-    
-    //Collision
-    collide(&l, m, &b, p);
-    monster_pop(&l);
-    monster_pop(&b);
-
-    if (p->etat == 0){
-      printf("GAME OVER !");
-      go = 0;
-    }
-
-    tick++;
-  }
 }
 
-
-
-void init(lutin* player, int x, int y, int sprtplr, cellule **pL, int nx, int ny, int e, int sprtmstr, int bord){
-    //Initialisation joueur
+void init(lutin* player, int x, int y, int sprtplr, cellule** pL, int nx, int ny, int e, int sprtmstr, int bord)
+{
+    // Initialisation joueur
     init_player(player, x, y, sprtplr);
-    
-    //Initialisation monstre
+
+    // Initialisation monstre
     init_list_monster(pL, nx, ny, e, sprtmstr, bord);
 }
-    
 
+void end()
+{
+    rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
+    int game_over = lutinTexte("GAME OVER !!!", 0);
 
-void end(){
-  rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
-  int game_over = lutinTexte("GAME OVER !!!", 0);
+    //   int taille[2];
+    //   tailleLutin(game_over.sprite, &taille[0], &taille[1]);
 
-//   int taille[2];
-//   tailleLutin(game_over.sprite, &taille[0], &taille[1]);
-
-  afficherLutin(game_over, LARGEUR/2/* - taille[0]/2*/, HAUTEUR/2/* - taille[1]/2*/);
+    afficherLutin(game_over, LARGEUR / 2 /* - taille[0]/2*/, HAUTEUR / 2 /* - taille[1]/2*/);
 }
 
+int main(void)
+{
+    initialise_rand();
 
+    creerSurface(LARGEUR, HAUTEUR, "Space Invader");
 
-int main(void) {
-  initialise_rand();
+    cellule* l = NULL;
+    cellule* b = NULL;
+    lutin m;
+    m.posy = -1;
+    lutin p;
 
-  creerSurface(LARGEUR, HAUTEUR, "Space Invader");
+    player1 = chargerLutin("../Lutins/invader_canon.bmp", 0);
+    monster1 = chargerLutin("../Lutins/invader_monstre2_1.bmp", 0);
+    // monster2 = chargerLutin("../Lutins/invader_monstre2_2.bmp",0);
+    bomb = chargerLutin("../Lutins/invader_bombe.bmp", 0);
+    missile = chargerLutin("../Lutins/invader_missile.bmp", 1);
 
-  cellule *l = NULL;
-  cellule *b = NULL;
-  lutin m;
-  m.posy = -1;
-  lutin p;
+    init(&p, LARGEUR / 2, HAUTEURP, player1, &l, COL, LIN, ECART, monster1, BORD);
 
-  player1 = chargerLutin("../Lutins/invader_canon.bmp", 0);
-  monster1 = chargerLutin("../Lutins/invader_monstre2_1.bmp", 0);
-  // monster2 = chargerLutin("../Lutins/invader_monstre2_2.bmp",0);
-  bomb = chargerLutin("../Lutins/invader_bombe.bmp", 0);
-  missile = chargerLutin("../Lutins/invader_missile.bmp", 1);
+    jeu(&p, l, b, &m);
 
-  init(&p, LARGEUR / 2, HAUTEURP, player1, &l, COL, LIN, ECART, monster1, BORD);
+    // free_list(&l);
+    // free_list(&b);
 
-  jeu(&p, l, b, &m);
+    while (1) {
+        end();
+    }
 
-  //free_list(&l);
-  //free_list(&b);
+    fermerSurface();
 
-  while(1){
-    end();
-  }
-
-  fermerSurface();
-
-  return 0;
+    return 0;
 }

@@ -6,108 +6,100 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-
-
-int bord_gauche(cellule *l) {
-  cellule *tmp = NULL;
-  tmp = l;
-  int min = LARGEUR;
-  while (tmp != NULL) {
-    if (tmp->lut.posx < min) {
-      min = tmp->lut.posx;
+int bord_gauche(cellule* l)
+{
+    cellule* tmp = NULL;
+    tmp = l;
+    int min = LARGEUR;
+    while (tmp != NULL) {
+        if (tmp->lut.posx < min) {
+            min = tmp->lut.posx;
+        }
+        tmp = tmp->suivant;
     }
-    tmp = tmp->suivant;
-  }
-  return min;
+    return min;
 }
 
-
-
-int bord_droit(cellule *l) {
-  cellule *tmp = NULL;
-  tmp = l;
-  int max = 0;
-  while (tmp != NULL) {
-    int a = 0;
-    int b = 0;
-    tailleLutin(tmp->lut.sprite, &a, &b);
-    if (tmp->lut.posx + a > max) {
-      max = tmp->lut.posx + a;
+int bord_droit(cellule* l)
+{
+    cellule* tmp = NULL;
+    tmp = l;
+    int max = 0;
+    while (tmp != NULL) {
+        int a = 0;
+        int b = 0;
+        tailleLutin(tmp->lut.sprite, &a, &b);
+        if (tmp->lut.posx + a > max) {
+            max = tmp->lut.posx + a;
+        }
+        tmp = tmp->suivant;
     }
-    tmp = tmp->suivant;
-  }
-  return max;
+    return max;
 }
 
-
-
-int bord_bas(cellule *l) {
-  cellule *tmp = NULL;
-  tmp = l;
-  int max = tmp->lut.posy;
-  while (tmp != NULL) {
-    int a = 0;
-    int b = 0;
-    tailleLutin(tmp->lut.sprite, &a, &b);
-    if (tmp->lut.posy + b > max) {
-      max = tmp->lut.posy + b;
+int bord_bas(cellule* l)
+{
+    cellule* tmp = NULL;
+    tmp = l;
+    int max = tmp->lut.posy;
+    while (tmp != NULL) {
+        int a = 0;
+        int b = 0;
+        tailleLutin(tmp->lut.sprite, &a, &b);
+        if (tmp->lut.posy + b > max) {
+            max = tmp->lut.posy + b;
+        }
+        tmp = tmp->suivant;
     }
-    tmp = tmp->suivant;
-  }
-  return max;
+    return max;
 }
 
-
-
-void move_mstr(cellule **pL, int dx, int dy) {
-  cellule *p = NULL;
-  p = *pL;
-  while (p != NULL) {
-    p->lut.posx += dx;
-    p->lut.posy += dy;
-    p = p->suivant;
-  }
-  majSurface();
-}
-
-
-
-
-void move_bomb(cellule **pL, int dy) {
-  cellule *p = NULL;
-  p = *pL;
-  while (p != NULL) {
-    p->lut.posy += dy;
-    p = p->suivant;
-  }
-  majSurface();
-}
-
-
-
-
-int move(cellule **pL, cellule **pB, lutin *m, int vitx) {
-  if (bord_gauche(*pL) >= BORD && bord_droit(*pL) <= LARGEUR - BORD) {
-    if (vitx == 1) {
-      move_mstr(pL, VITXM, 0);
-    } else {
-      move_mstr(pL, -1 * VITXM, 0);
+void move_mstr(cellule** pL, int dx, int dy)
+{
+    cellule* p = NULL;
+    p = *pL;
+    while (p != NULL) {
+        p->lut.posx += dx;
+        p->lut.posy += dy;
+        p = p->suivant;
     }
-  }
+    majSurface();
+}
 
-  else if (bord_gauche(*pL) < BORD) {
-    vitx = 1;
-    move_mstr(pL, VITXM, VITYM);
-  }
+void move_bomb(cellule** pL, int dy)
+{
+    cellule* p = NULL;
+    p = *pL;
+    while (p != NULL) {
+        p->lut.posy += dy;
+        p = p->suivant;
+    }
+    majSurface();
+}
 
-  else if (bord_droit(*pL) > LARGEUR - BORD) {
-    vitx = -1;
-    move_mstr(pL, -1 * VITXM, VITYM);
-  }
+int move(cellule** pL, cellule** pB, lutin* m, int vitx)
+{
+    if (bord_gauche(*pL) >= BORD && bord_droit(*pL) <= LARGEUR - BORD) {
+        if (vitx == 1) {
+            move_mstr(pL, VITXM, 0);
+        } else {
+            move_mstr(pL, -1 * VITXM, 0);
+        }
+    }
 
-  move_bomb(pB, VITYB);
+    else if (bord_gauche(*pL) < BORD) {
+        vitx = 1;
+        move_mstr(pL, VITXM, VITYM);
+    }
 
-  m->posy += VITYMISS;
-  
-  return vitx;
+    else if (bord_droit(*pL) > LARGEUR - BORD) {
+        vitx = -1;
+        move_mstr(pL, -1 * VITXM, VITYM);
+    }
+
+    move_bomb(pB, VITYB);
+
+    m->posy += VITYMISS;
+
+    return vitx;
 }

@@ -3,9 +3,11 @@ CC=clang
 TARGET=main
 CFLAGS=-g -W -Wall -Wextra
 LDFLAGS=-lgraph -lSDL -lSDL_ttf -LGraphique
+ALLH=define.h ListeChainee/list.h Random/alea.h Deplacement/move.h Collision/collide.h
+ALLCH=main.c define.h ListeChainee/list.* Random/alea.* Deplacement/move.* Collision/collide.*
 
-all: ${TARGET}
-	$(MAKE) -C Graphique $@
+
+all: ${TARGET}	$(MAKE) -C Graphique $@
 
 list.o: ListeChainee/list.h ListeChainee/list.c
 	clang $(CFLAGS) -c ListeChainee/list.c
@@ -19,7 +21,7 @@ move.o: Deplacement/move.h Deplacement/move.c
 collide.o: Collision/collide.h Collision/collide.c
 	clang $(CFLAGS) -c Collision/collide.c
 
-main.o: main.c define.h ListeChainee/list.h Random/alea.h Deplacement/move.h Collision/collide.h
+main.o: main.c $(ALLH)
 	clang $(CFLAGS) -c main.c
 
 ${TARGET}: main.o list.o alea.o move.o collide.o
@@ -30,3 +32,10 @@ ${TARGET}: main.o list.o alea.o move.o collide.o
 clean:
 	rm -f ${TARGET}
 	rm -f *.o
+
+format:
+	clang-format -i -style="Webkit" $(ALLCH)
+
+tidy:
+	clang-tidy $(ALLCH) --checks="readability-*"
+

@@ -2,20 +2,19 @@
 /*Code pour le TP4 de Programmation Structurée*/
 /*IMA, Polytech'Lille, 2012*/
 
+#include "alea.h"
 #include <stdlib.h>
 #include <time.h>
-#include "alea.h"
-
 
 /*initialisation du generateur*/
 void initialise_rand()
 {
-  srand(time(NULL));  
+    srand(time(NULL));
 }
 
 /*tire un entier au hasard entre inf et sup */
 int hasard(int inf, int sup)
 {
-  int rando = rand();
-  return (inf + (rando % (sup - inf +1)));
+    int rando = rand();
+    return (inf + (rando % (sup - inf + 1)));
 }
