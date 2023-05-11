@@ -47,11 +47,11 @@ Enfin, vous pouvez modifier également la difficultés du jeu en modifiant :
 
 ATTENTION : Ces valeurs sont à modifier à la fois dans `main.c` et dans `move.c` !
 
-##Contrôles
+## Contrôles
 
 Le vaisseau joueur peut être contrôler de gauche à droite avec les touches `ARROW_LEFT` et `ARROW_RIGHT`. Vous pouvez également tirer en touchant `SPACE`.
 
-##Lancement de la partie
+## Lancement de la partie
 
 Rendez vous dans le repertoire src en tapant `cd ProjetInvaders/src` dans le terminal. C'est depuis ce repértoire que vous pourrez lancer la partie et jouer au jeu. Pour lancer une partie, taper les deux commandes suivantes :
 
@@ -64,4 +64,6 @@ et profiter de votre jeu !
 
 Vous pouvez également formater les fichier au format Webkit en tapant `make format`, et vérifier que le code est propre avec `make tidy`. Enfin, vous pouvez supprimer les executables en tapant `make clean`. 
 
-##BON AMUSEMENT !
+## BON AMUSEMENT !
+
+Merci de tester mon jeu ! N'hésitez pas à me faire des retours dessus, des mises à jours sont susceptibles d'arriver !
