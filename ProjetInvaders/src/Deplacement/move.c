@@ -1,10 +1,17 @@
 #include "move.h"
 #include "../Graphique/libgraph.h"
 #include "../ListeChainee/list.h"
-#include "../define.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#define LARGEUR 1400    //Largeur de l'écran
+#define BORD 0          //Distance entre le bord de l'écran et les monstres
+#define VITXM 1         //Vitesse des monstres sur l'axe X
+#define VITYM 10        //Vitesse des monstres sur l'axe Y
+#define VITYB 5         //Vitesse des bombes
+#define VITYMISS -15    //Vitesse des missiles
+
 
 int bord_gauche(cellule* l)
 {

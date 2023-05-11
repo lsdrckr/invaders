@@ -1,7 +1,6 @@
 #include "collide.h"
 #include "../Graphique/libgraph.h"
 #include "../ListeChainee/list.h"
-#include "../define.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,8 +3,8 @@ CC=clang
 TARGET=main
 CFLAGS=-g -W -Wall -Wextra
 LDFLAGS=-lgraph -lSDL -lSDL_ttf -LGraphique
-ALLH=define.h ListeChainee/list.h Random/alea.h Deplacement/move.h Collision/collide.h
-ALLCH=main.c define.h ListeChainee/list.* Random/alea.* Deplacement/move.* Collision/collide.*
+ALLH=ListeChainee/list.h Random/alea.h Deplacement/move.h Collision/collide.h
+ALLCH=main.c ListeChainee/list.* Random/alea.* Deplacement/move.* Collision/collide.*
 
 
 all: ${TARGET}	$(MAKE) -C Graphique $@
@@ -38,4 +38,5 @@ format:
 
 tidy:
 	clang-tidy $(ALLCH) --checks="readability-*"
+	clang-tidy $(ALLCH) --checks="cppcoreguidelines-init-variables”
 

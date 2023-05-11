@@ -3,13 +3,26 @@
 #include "Graphique/libgraph.h"
 #include "ListeChainee/list.h"
 #include "Random/alea.h"
-#include "define.h"
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
+
+#define HAUTEUR 1000            //Hauteur de l'écran
+#define LARGEUR 1400            //Largeur de l'écran
+#define BORD 0                  //Distance entre le bord de l'écran et les monstres
+#define COL 9                   //Nombres de colonnes de monstres
+#define LIN 3                   //Nombres de lignes de monstres
+#define ECART 70                //Distance entre chaque monstres
+#define BOMBSPEED 50            //Fréquence de tir des bombes
+#define MISSILESPEED 25         //Fréquence de tir des missiles
+#define VITXP 5                 //Vitesse du joueur sur l'axe X
+#define SLEEP 10000             //Fréquence de rafrâîchissement
+#define HAUTEURP (HAUTEUR - 50) //Hauteur du joueur
+
 
 // Variables globales
 int player1;
