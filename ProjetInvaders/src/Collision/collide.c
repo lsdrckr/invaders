@@ -43,8 +43,8 @@ void collide_p_b(cellule** bomb, lutin* play)
             tail_pop(bomb);
             play->etat = 0;
             break;
-        }
-        else tmp = tmp->suivant;
+        } else
+            tmp = tmp->suivant;
     }
 }
 

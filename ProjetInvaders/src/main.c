@@ -72,8 +72,7 @@ void del_bomb(cellule** bomb)
     while ((*tmp)->suivant != NULL) {
         if (!((*tmp)->lut.posy >= HAUTEUR)) {
             (*tmp) = (*tmp)->suivant;
-        }
-        else {
+        } else {
             tmp = tail_pop(tmp);
             break;
         }
@@ -119,12 +118,13 @@ int bomber(cellule* list, int cmpt)
     cellule* tmp = NULL;
     tmp = list;
     int x_b = 0;
-    if (tmp != NULL) x_b = tmp->lut.posy + taille[1]/2;
+    if (tmp != NULL)
+        x_b = tmp->lut.posy + taille[1] / 2;
     bool cont = 1;
     while ((tmp != NULL) && (cont)) {
         if (tmp->lut.etat == 2) {
             if (!hasard(0, cmpt)) {
-                x_b = tmp->lut.posx + taille[1]/2;
+                x_b = tmp->lut.posx + taille[1] / 2;
                 cont = 0;
             }
             cmpt--;
@@ -195,7 +195,7 @@ void jeu(lutin* play, cellule* list, cellule* bomb, lutin* miss)
             break;
         }
 
-        if (list == NULL){
+        if (list == NULL) {
             printf("VOUS AVEZ GAGNE !\n");
             break;
         }
