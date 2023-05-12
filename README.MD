@@ -49,7 +49,7 @@ ATTENTION : Ces valeurs sont à modifier à la fois dans `main.c` et dans `move.
 
 ## Contrôles
 
-Le vaisseau joueur peut être contrôler de gauche à droite avec les touches `ARROW_LEFT` et `ARROW_RIGHT`. Vous pouvez également tirer en touchant `SPACE`.
+Le vaisseau joueur peut être contrôler de gauche à droite avec les touches `ARROW_LEFT` ou `Q` et `ARROW_RIGHT` ou `D`. Vous pouvez également tirer en touchant `SPACE`.
 
 ## Lancement de la partie
 
