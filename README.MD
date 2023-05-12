@@ -16,7 +16,7 @@ Ce paramètre peut être modifié en changeant les valeurs suivantes par celles 
 #define LARGEUR xxxx
 ```
 
-ATTENTION : Ces valeurs sont à modifier à la fois dans `main.c` et dans `move.c` !
+ATTENTION : Ces valeurs sont à modifier à la fois dans `main.c` et dans `Deplacement/move.c` !
 
 ### Position des ennemis
 

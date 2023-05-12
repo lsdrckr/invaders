@@ -2,11 +2,11 @@
 #define __MOVE_H__
 #include "../ListeChainee/list.h"
 
-int bord_gauche(cellule* l);
-int bord_droit(cellule* l);
-int bord_bas(cellule* l);
-void move_mstr(cellule** pL, int dx, int dy);
-void move_bomb(cellule** pL, int dy);
-int move(cellule** pL, cellule** pB, lutin* m, int vitx);
+int bord_gauche(cellule* list);
+int bord_droit(cellule* list);
+int bord_bas(cellule* list);
+void move_mstr(cellule** pointL, int d_x, int d_y);
+void move_bomb(cellule** pointL, int d_y);
+int move(cellule** pointL, cellule** pointB, lutin* miss, int vitx);
 
 #endif

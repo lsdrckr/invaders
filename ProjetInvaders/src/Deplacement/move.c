@@ -5,18 +5,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define LARGEUR 1400    //Largeur de l'écran
-#define BORD 0          //Distance entre le bord de l'écran et les monstres
-#define VITXM 1         //Vitesse des monstres sur l'axe X
-#define VITYM 10        //Vitesse des monstres sur l'axe Y
-#define VITYB 5         //Vitesse des bombes
-#define VITYMISS -15    //Vitesse des missiles
+#define LARGEUR 1400 // Largeur de l'écran
+#define BORD 0 // Distance entre le bord de l'écran et les monstres
+#define VITXM 1 // Vitesse des monstres sur l'axe X
+#define VITYM 10 // Vitesse des monstres sur l'axe Y
+#define VITYB 5 // Vitesse des bombes
+#define VITYMISS -15 // Vitesse des missiles
 
-
-int bord_gauche(cellule* l)
+int bord_gauche(cellule* list)
 {
     cellule* tmp = NULL;
-    tmp = l;
+    tmp = list;
     int min = LARGEUR;
     while (tmp != NULL) {
         if (tmp->lut.posx < min) {
@@ -27,86 +26,86 @@ int bord_gauche(cellule* l)
     return min;
 }
 
-int bord_droit(cellule* l)
+int bord_droit(cellule* list)
 {
     cellule* tmp = NULL;
-    tmp = l;
+    tmp = list;
     int max = 0;
     while (tmp != NULL) {
-        int a = 0;
-        int b = 0;
-        tailleLutin(tmp->lut.sprite, &a, &b);
-        if (tmp->lut.posx + a > max) {
-            max = tmp->lut.posx + a;
+        int cmpta = 0;
+        int cmptb = 0;
+        tailleLutin(tmp->lut.sprite, &cmpta, &cmptb);
+        if (tmp->lut.posx + cmpta > max) {
+            max = tmp->lut.posx + cmpta;
         }
         tmp = tmp->suivant;
     }
     return max;
 }
 
-int bord_bas(cellule* l)
+int bord_bas(cellule* list)
 {
     cellule* tmp = NULL;
-    tmp = l;
-    int max = tmp->lut.posy;
+    tmp = list;
+    int max = 0;
     while (tmp != NULL) {
-        int a = 0;
-        int b = 0;
-        tailleLutin(tmp->lut.sprite, &a, &b);
-        if (tmp->lut.posy + b > max) {
-            max = tmp->lut.posy + b;
+        int cmpta = 0;
+        int cmptb = 0;
+        tailleLutin(tmp->lut.sprite, &cmpta, &cmptb);
+        if (tmp->lut.posy + cmptb > max) {
+            max = tmp->lut.posy + cmptb;
         }
         tmp = tmp->suivant;
     }
     return max;
 }
 
-void move_mstr(cellule** pL, int dx, int dy)
+void move_mstr(cellule** pointL, int d_x, int d_y)
 {
-    cellule* p = NULL;
-    p = *pL;
-    while (p != NULL) {
-        p->lut.posx += dx;
-        p->lut.posy += dy;
-        p = p->suivant;
+    cellule* tmp = NULL;
+    tmp = *pointL;
+    while (tmp != NULL) {
+        tmp->lut.posx += d_x;
+        tmp->lut.posy += d_y;
+        tmp = tmp->suivant;
     }
     majSurface();
 }
 
-void move_bomb(cellule** pL, int dy)
+void move_bomb(cellule** pointL, int d_y)
 {
-    cellule* p = NULL;
-    p = *pL;
-    while (p != NULL) {
-        p->lut.posy += dy;
-        p = p->suivant;
+    cellule* tmp = NULL;
+    tmp = *pointL;
+    while (tmp != NULL) {
+        tmp->lut.posy += d_y;
+        tmp = tmp->suivant;
     }
     majSurface();
 }
 
-int move(cellule** pL, cellule** pB, lutin* m, int vitx)
+int move(cellule** pointL, cellule** pointB, lutin* miss, int vitx)
 {
-    if (bord_gauche(*pL) >= BORD && bord_droit(*pL) <= LARGEUR - BORD) {
+    if (bord_gauche(*pointL) >= BORD && bord_droit(*pointL) <= LARGEUR - BORD) {
         if (vitx == 1) {
-            move_mstr(pL, VITXM, 0);
+            move_mstr(pointL, VITXM, 0);
         } else {
-            move_mstr(pL, -1 * VITXM, 0);
+            move_mstr(pointL, -1 * VITXM, 0);
         }
     }
 
-    else if (bord_gauche(*pL) < BORD) {
+    else if (bord_gauche(*pointL) < BORD) {
         vitx = 1;
-        move_mstr(pL, VITXM, VITYM);
+        move_mstr(pointL, VITXM, VITYM);
     }
 
-    else if (bord_droit(*pL) > LARGEUR - BORD) {
+    else if (bord_droit(*pointL) > LARGEUR - BORD) {
         vitx = -1;
-        move_mstr(pL, -1 * VITXM, VITYM);
+        move_mstr(pointL, -1 * VITXM, VITYM);
     }
 
-    move_bomb(pB, VITYB);
+    move_bomb(pointB, VITYB);
 
-    m->posy += VITYMISS;
+    miss->posy += VITYMISS;
 
     return vitx;
 }

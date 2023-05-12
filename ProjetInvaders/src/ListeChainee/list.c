@@ -4,63 +4,63 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void head_push(cellule** pL, struct lutin lut)
+void head_push(cellule** pointL, struct lutin lut)
 {
     cellule* tmp = malloc(sizeof(cellule));
     tmp->lut = lut;
-    tmp->suivant = *pL;
-    *pL = tmp;
+    tmp->suivant = *pointL;
+    *pointL = tmp;
 }
 
-void print_list(cellule* l)
+void print_list(cellule* list)
 {
-    cellule* p = NULL;
-    p = l;
-    while (p != NULL) {
-        printf("(%d;%d) -> ", p->lut.posx, p->lut.posy);
-        p = p->suivant;
+    cellule* tmp = NULL;
+    tmp = list;
+    while (tmp != NULL) {
+        printf("(%d;%d) -> ", tmp->lut.posx, tmp->lut.posy);
+        tmp = tmp->suivant;
     }
     printf("\n");
 }
 
-void head_pop(cellule** pL)
+void head_pop(cellule** pointL)
 {
     cellule* tmp = NULL;
-    tmp = *pL;
-    *pL = (*pL)->suivant;
+    tmp = *pointL;
+    *pointL = (*pointL)->suivant;
     free(tmp);
 }
 
-cellule** tail_pop(cellule** pL)
+cellule** tail_pop(cellule** pointL)
 {
     cellule* tmp = NULL;
-    tmp = *pL;
-    cellule* l = NULL;
-    cellule* t = NULL;
+    tmp = *pointL;
+    cellule* list = NULL;
+    cellule* tmp2 = NULL;
     while (tmp->suivant->suivant != NULL) {
         tmp = tmp->suivant;
     }
-    l = tmp;
-    t = tmp->suivant;
-    l->suivant = NULL;
-    free(t);
-    return pL;
+    list = tmp;
+    tmp2 = tmp->suivant;
+    list->suivant = NULL;
+    free(tmp2);
+    return pointL;
 }
 
-void monster_pop(cellule** pL)
+void monster_pop(cellule** pointL)
 {
-    cellule* tmp = *pL;
+    cellule* tmp = *pointL;
     cellule* ptmp = NULL;
     while (tmp != NULL) {
         if (tmp->lut.etat == 0) {
             if (ptmp == NULL) {
-                *pL = tmp->suivant;
+                *pointL = tmp->suivant;
             } else {
                 ptmp->suivant = tmp->suivant;
             }
-            cellule* a = tmp;
+            cellule* tmp2 = tmp;
             tmp = tmp->suivant;
-            free(a);
+            free(tmp2);
         } else {
             ptmp = tmp;
             tmp = tmp->suivant;
@@ -69,37 +69,37 @@ void monster_pop(cellule** pL)
     free(tmp);
 }
 
-void free_list(cellule** pL)
+void free_list(cellule** pointL)
 {
-    while ((*pL)->suivant != NULL) {
-        head_pop(pL);
+    while ((*pointL)->suivant != NULL) {
+        head_pop(pointL);
     }
-    head_pop(pL);
+    head_pop(pointL);
 }
 
-void init_list_monster(cellule** pL, int nx, int ny, int e, int sprt, int bord)
+void init_list_monster(cellule** pointL, int n_x, int n_y, int ecart, int sprt, int bord)
 {
-    for (int y = 0; y < ny; y++) {
-        for (int x = 0; x < nx; x++) {
+    for (int cmpty = 0; cmpty < n_y; cmpty++) {
+        for (int cmptx = 0; cmptx < n_x; cmptx++) {
             lutin lut;
             lut.sprite = sprt;
-            lut.posx = e * x + bord;
-            lut.posy = e * y + bord;
+            lut.posx = ecart * cmptx + bord + 20;
+            lut.posy = ecart * cmpty + bord + 20;
             lut.etat = 1;
-            head_push(pL, lut);
+            head_push(pointL, lut);
             afficherLutin(lut.sprite, lut.posx, lut.posy);
             majSurface();
         }
     }
 }
 
-void bomb_add(cellule** pL, int x, int y, int sprt)
+void bomb_add(cellule** pointL, int x_p, int y_p, int sprt)
 {
     lutin lut;
-    lut.posx = x;
-    lut.posy = y;
+    lut.posx = x_p;
+    lut.posy = y_p;
     lut.sprite = sprt;
     lut.etat = 1;
-    head_push(pL, lut);
+    head_push(pointL, lut);
     afficherLutin(lut.sprite, lut.posx, lut.posy);
 }
