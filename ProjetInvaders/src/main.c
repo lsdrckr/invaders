@@ -30,7 +30,6 @@ int monster1;
 // int monster2;
 int bomb;
 int missile;
-int vie;
 
 void init_player(lutin* player, int x, int y, int sprt)
 {
@@ -92,11 +91,13 @@ void refresh(cellule* l, cellule* b, lutin m, lutin p)
     tmpmstr = l;
 
     while (tmpmstr != NULL) {
+        printf("Monstres\n");
         afficherLutin(tmpmstr->lut.sprite, tmpmstr->lut.posx, tmpmstr->lut.posy);
         tmpmstr = tmpmstr->suivant;
     }
 
     // Refresh player
+    printf("Player\n");
     afficherLutin(p.sprite, p.posx, p.posy);
 
     // Refresh bombes
@@ -104,6 +105,7 @@ void refresh(cellule* l, cellule* b, lutin m, lutin p)
     tmpbomb = b;
 
     while (tmpbomb != NULL) {
+        printf("Bombes\n");
         afficherLutin(tmpbomb->lut.sprite, tmpbomb->lut.posx, tmpbomb->lut.posy);
         tmpbomb = tmpbomb->suivant;
     }
@@ -111,6 +113,7 @@ void refresh(cellule* l, cellule* b, lutin m, lutin p)
     del_bomb(&b);
 
     // Refresh missile
+    printf("Missiles\n");
     afficherLutin(m.sprite, m.posx, m.posy);
 }
 
@@ -133,11 +136,25 @@ int bomber(cellule* l, int cmpt)
     return x;
 }
 
+
+void end()
+{
+    rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
+    int game_over = lutinTexte("GAME OVER !!!", 0);
+
+    //   int taille[2];
+    //   tailleLutin(game_over.sprite, &taille[0], &taille[1]);
+
+    printf("MERDE\n");
+    afficherLutin(game_over, LARGEUR / 2 /* - taille[0]/2*/, HAUTEUR / 2 /* - taille[1]/2*/);
+}
+
 void jeu(lutin* p, cellule* l, cellule* b, lutin* m)
 {
     int go = 1;
     int vitx = 1;
     int tick = 0;
+    int vie = 2;
 
     int taille[2];
     tailleLutin(p->sprite, &taille[0], &taille[1]);
@@ -151,13 +168,13 @@ void jeu(lutin* p, cellule* l, cellule* b, lutin* m)
             go = 0;
             break;
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_RIGHT) {
+            if ((event.key.keysym.sym == SDLK_RIGHT) || (event.key.keysym.sym == SDLK_d)) {
                 if (p->posx < LARGEUR - BORD - taille[0]) {
                     p->posx += VITXP;
                 }
             }
 
-            if (event.key.keysym.sym == SDLK_LEFT) {
+            if ((event.key.keysym.sym == SDLK_LEFT) || (event.key.keysym.sym == SDLK_q)) {
                 if (p->posx > BORD) {
                     p->posx -= VITXP;
                 }
@@ -185,12 +202,13 @@ void jeu(lutin* p, cellule* l, cellule* b, lutin* m)
 
         if (p->etat == 0) {
             vie --;
+            printf("Plus que %d vie(s) !\n", vie);
             if (vie == 0){
-                printf("GAME OVER !");
-                vie ++;
+                printf("GAME OVER !\n");
+                go = 0;
+                end();
             }
-            p->etat = 0;
-            go = 0;
+            //p->etat = 1;
         }
 
         tick++;
@@ -204,17 +222,6 @@ void init(lutin* player, int x, int y, int sprtplr, cellule** pL, int nx, int ny
 
     // Initialisation monstre
     init_list_monster(pL, nx, ny, e, sprtmstr, bord);
-}
-
-void end()
-{
-    rectanglePlein(0, 0, LARGEUR, HAUTEUR, 1);
-    int game_over = lutinTexte("GAME OVER !!!", 0);
-
-    //   int taille[2];
-    //   tailleLutin(game_over.sprite, &taille[0], &taille[1]);
-
-    afficherLutin(game_over, LARGEUR / 2 /* - taille[0]/2*/, HAUTEUR / 2 /* - taille[1]/2*/);
 }
 
 int main(void)
